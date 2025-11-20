@@ -58,6 +58,7 @@ build-image-all: build-image-csi build-image-snapshot-controller
 push-image-csi: IMAGE = $(REPO)/hardened-csi-snapshotter:$(TAG)
 push-image-csi:
 	docker buildx build \
+		$(IID_FILE_FLAG) \ # Provided in GHA by ecm-distro-tools/action/publish-image
 		--sbom=true \
 		--attest type=provenance,mode=max \
 		--platform=$(TARGET_PLATFORMS) \
@@ -73,6 +74,7 @@ push-image-csi:
 push-image-snapshot-controller: IMAGE = $(REPO)/hardened-snapshot-controller:$(TAG)
 push-image-snapshot-controller:
 	docker buildx build \
+		$(IID_FILE_FLAG) \ # Provided in GHA by ecm-distro-tools/action/publish-image
 		--sbom=true \
 		--attest type=provenance,mode=max \
 		--platform=$(TARGET_PLATFORMS) \

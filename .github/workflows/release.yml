@@ -1,0 +1,81 @@
+name: Release
+on:
+  release:
+    types: [published]
+
+jobs:
+  release-csi-snapshotter:
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v5
+
+    - name: "Read secrets"
+      if: github.repository_owner == 'rancher'
+      uses: rancher-eio/read-vault-secrets@main
+      with:
+        secrets: |
+          secret/data/github/repo/${{ github.repository }}/dockerhub/rancher/credentials username  | DOCKERHUB_USERNAME ;
+          secret/data/github/repo/${{ github.repository }}/dockerhub/rancher/credentials  | DOCKERHUB_PASSWORD ;
+          secret/data/github/repo/${{ github.repository }}/rancher-prime-registry/credentials registry | PRIME_REGISTRY ;
+          secret/data/github/repo/${{ github.repository }}/rancher-prime-registry/credentials username | PRIME_REGISTRY_USERNAME ;
+          secret/data/github/repo/${{ github.repository }}/rancher-prime-registry/credentials password | PRIME_REGISTRY_PASSWORD ;
+
+    # For forks, store docker credentials in GHA secrets
+    - name: Build and push multi-arch csi-snapshotter image
+      uses: rancher/ecm-distro-tools/actions/publish-image@master
+      with:
+        image: hardened-csi-snapshotter
+        make-target: push-image-csi
+        platforms: linux/amd64,linux/arm64
+        tag: ${{ github.event.release.tag_name }}
+        public-repo: ${{ github.repository_owner }}
+        public-username: ${{ github.repository_owner == 'rancher' && env.DOCKER_USERNAME || secrets.DOCKER_USERNAME }}
+        public-password: ${{ github.repository_owner == 'rancher' && env.DOCKER_PASSWORD || secrets.DOCKER_PASSWORD }}
+        
+        prime-repo: rancher
+        prime-registry: ${{ env.PRIME_REGISTRY }}
+        prime-username: ${{ env.PRIME_REGISTRY_USERNAME }}
+        prime-password: ${{ env.PRIME_REGISTRY_PASSWORD }}
+        push-to-prime: ${{ github.repository_owner == 'rancher' }}
+
+  release-snapshot-controller:
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v5
+
+    - name: "Read secrets"
+      if: github.repository_owner == 'rancher'
+      uses: rancher-eio/read-vault-secrets@main
+      with:
+        secrets: |
+          secret/data/github/repo/${{ github.repository }}/dockerhub/rancher/credentials username  | DOCKERHUB_USERNAME ;
+          secret/data/github/repo/${{ github.repository }}/dockerhub/rancher/credentials  | DOCKERHUB_PASSWORD ;
+          secret/data/github/repo/${{ github.repository }}/rancher-prime-registry/credentials registry | PRIME_REGISTRY ;
+          secret/data/github/repo/${{ github.repository }}/rancher-prime-registry/credentials username | PRIME_REGISTRY_USERNAME ;
+          secret/data/github/repo/${{ github.repository }}/rancher-prime-registry/credentials password | PRIME_REGISTRY_PASSWORD ;
+
+    # For forks, store docker credentials in GHA secrets
+    - name: Build and push multi-arch csi-snapshotter image
+      uses: rancher/ecm-distro-tools/actions/publish-image@master
+      with:
+        image: hardened-snapshot-controller
+        make-target: push-image-snapshot-controller
+        platforms: linux/amd64,linux/arm64
+        tag: ${{ github.event.release.tag_name }}
+        public-repo: ${{ github.repository_owner }}
+        public-username: ${{ github.repository_owner == 'rancher' && env.DOCKER_USERNAME || secrets.DOCKER_USERNAME }}
+        public-password: ${{ github.repository_owner == 'rancher' && env.DOCKER_PASSWORD || secrets.DOCKER_PASSWORD }}
+        
+        prime-repo: rancher
+        prime-registry: ${{ env.PRIME_REGISTRY }}
+        prime-username: ${{ env.PRIME_REGISTRY_USERNAME }}
+        prime-password: ${{ env.PRIME_REGISTRY_PASSWORD }}
+        push-to-prime: ${{ github.repository_owner == 'rancher' }}
