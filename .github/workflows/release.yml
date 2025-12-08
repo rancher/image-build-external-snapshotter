@@ -19,7 +19,7 @@ jobs:
       with:
         secrets: |
           secret/data/github/repo/${{ github.repository }}/dockerhub/rancher/credentials username  | DOCKERHUB_USERNAME ;
-          secret/data/github/repo/${{ github.repository }}/dockerhub/rancher/credentials  | DOCKERHUB_PASSWORD ;
+          secret/data/github/repo/${{ github.repository }}/dockerhub/rancher/credentials password | DOCKERHUB_PASSWORD ;
           secret/data/github/repo/${{ github.repository }}/rancher-prime-registry/credentials registry | PRIME_REGISTRY ;
           secret/data/github/repo/${{ github.repository }}/rancher-prime-registry/credentials username | PRIME_REGISTRY_USERNAME ;
           secret/data/github/repo/${{ github.repository }}/rancher-prime-registry/credentials password | PRIME_REGISTRY_PASSWORD ;
@@ -40,7 +40,8 @@ jobs:
         prime-registry: ${{ env.PRIME_REGISTRY }}
         prime-username: ${{ env.PRIME_REGISTRY_USERNAME }}
         prime-password: ${{ env.PRIME_REGISTRY_PASSWORD }}
-        push-to-prime: ${{ github.repository_owner == 'rancher' }}
+        # push-to-prime: ${{ github.repository_owner == 'rancher' }}
+        push-to-prime: false
 
   release-snapshot-controller:
     permissions:
@@ -57,7 +58,7 @@ jobs:
       with:
         secrets: |
           secret/data/github/repo/${{ github.repository }}/dockerhub/rancher/credentials username  | DOCKERHUB_USERNAME ;
-          secret/data/github/repo/${{ github.repository }}/dockerhub/rancher/credentials  | DOCKERHUB_PASSWORD ;
+          secret/data/github/repo/${{ github.repository }}/dockerhub/rancher/credentials password | DOCKERHUB_PASSWORD ;
           secret/data/github/repo/${{ github.repository }}/rancher-prime-registry/credentials registry | PRIME_REGISTRY ;
           secret/data/github/repo/${{ github.repository }}/rancher-prime-registry/credentials username | PRIME_REGISTRY_USERNAME ;
           secret/data/github/repo/${{ github.repository }}/rancher-prime-registry/credentials password | PRIME_REGISTRY_PASSWORD ;
@@ -78,4 +79,5 @@ jobs:
         prime-registry: ${{ env.PRIME_REGISTRY }}
         prime-username: ${{ env.PRIME_REGISTRY_USERNAME }}
         prime-password: ${{ env.PRIME_REGISTRY_PASSWORD }}
-        push-to-prime: ${{ github.repository_owner == 'rancher' }}
+        # push-to-prime: ${{ github.repository_owner == 'rancher' }}
+        push-to-prime: false
