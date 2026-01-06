@@ -40,8 +40,7 @@ jobs:
         prime-registry: ${{ env.PRIME_REGISTRY }}
         prime-username: ${{ env.PRIME_REGISTRY_USERNAME }}
         prime-password: ${{ env.PRIME_REGISTRY_PASSWORD }}
-        # push-to-prime: ${{ github.repository_owner == 'rancher' }}
-        push-to-prime: false
+        push-to-prime: ${{ github.repository_owner == 'rancher' }}
 
   release-snapshot-controller:
     permissions:
@@ -79,5 +78,4 @@ jobs:
         prime-registry: ${{ env.PRIME_REGISTRY }}
         prime-username: ${{ env.PRIME_REGISTRY_USERNAME }}
         prime-password: ${{ env.PRIME_REGISTRY_PASSWORD }}
-        # push-to-prime: ${{ github.repository_owner == 'rancher' }}
-        push-to-prime: false
+        push-to-prime: ${{ github.repository_owner == 'rancher' }}
