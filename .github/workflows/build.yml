@@ -61,7 +61,7 @@ jobs:
       run: make build-image-snapshot-controller
     
     - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@0.33.1
+      uses: aquasecurity/trivy-action@0.35.0
       with:
         image-ref: rancher/hardened-snapshot-controller:${{ env.TAG }}
         ignore-unfixed: true
