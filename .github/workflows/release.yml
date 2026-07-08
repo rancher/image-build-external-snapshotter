@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
-      uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
     - name: "Read secrets"
       if: github.repository_owner == 'rancher'
@@ -26,7 +26,7 @@ jobs:
 
     # For forks, store docker credentials in GHA secrets
     - name: Build and push multi-arch csi-snapshotter image
-      uses: rancher/ecm-distro-tools/actions/publish-image@10ab39987d39be83da6a252c1c3b540e496e0287 # v0.66.0
+      uses: rancher/ecm-distro-tools/actions/publish-image@49656efa72e90062a70fac1a85ad121f4873a6a0 # v0.74.4
       with:
         image: hardened-csi-snapshotter
         make-target: push-image-csi
@@ -49,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
-      uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
     - name: "Read secrets"
       if: github.repository_owner == 'rancher'
@@ -64,7 +64,7 @@ jobs:
 
     # For forks, store docker credentials in GHA secrets
     - name: Build and push multi-arch csi-snapshotter image
-      uses: rancher/ecm-distro-tools/actions/publish-image@10ab39987d39be83da6a252c1c3b540e496e0287 # v0.66.0
+      uses: rancher/ecm-distro-tools/actions/publish-image@49656efa72e90062a70fac1a85ad121f4873a6a0 # v0.74.4
       with:
         image: hardened-snapshot-controller
         make-target: push-image-snapshot-controller
