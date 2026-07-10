@@ -1,0 +1,73 @@
+# This workflow triggers on any Dockerfile changes that occur on main.
+# 99% of the time, from an UpdateCLI PR merging that bumps the base image.
+name: Release on Base Image Update
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'Dockerfile'
+  workflow_dispatch:
+
+permissions:
+    contents: write
+    id-token: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+
+      - name: Validate base image change is included
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          base_sha="${{ github.event.before }}"
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" || -z "$base_sha" || "$base_sha" == "0000000000000000000000000000000000000000" ]]; then
+            base_sha="$(git rev-parse HEAD^)"
+          fi
+
+          dockerfile_diff="$(git diff --unified=0 "$base_sha" "$GITHUB_SHA" -- Dockerfile)"
+
+          old_go_image="$(grep -E '^-ARG GO_IMAGE=rancher/hardened-build-base:v[0-9]+\.[0-9]+\.[0-9]+b[0-9]+$' <<< "$dockerfile_diff" | sed -E 's/^-ARG GO_IMAGE=//' | head -n1)"
+          new_go_image="$(grep -E '^\+ARG GO_IMAGE=rancher/hardened-build-base:v[0-9]+\.[0-9]+\.[0-9]+b[0-9]+$' <<< "$dockerfile_diff" | sed -E 's/^\+ARG GO_IMAGE=//' | head -n1)"
+
+          if [[ -z "$old_go_image" || -z "$new_go_image" ]]; then
+            echo "Missing required GO_IMAGE replacement in Dockerfile diff"
+            exit 1
+          fi
+
+          if [[ "$old_go_image" == "$new_go_image" ]]; then
+            echo "GO_IMAGE line was not actually changed"
+            exit 1
+          fi
+
+          echo "Validation passed: GO_IMAGE changed from $old_go_image to $new_go_image."
+
+      - name: "Read Secrets"
+        uses: rancher-eio/read-vault-secrets@0da85151ad1f19ed7986c41587e45aac1ace74b6 # v3
+        with:
+          secrets: |
+            secret/data/github/repo/${{ github.repository }}/github/rancher-release-team-auto-tagger/app-credentials appId | APP_ID ;
+            secret/data/github/repo/${{ github.repository }}/github/rancher-release-team-auto-tagger/app-credentials privateKey | PRIVATE_KEY
+
+      - name: Generate GitHub App token
+        id: generate-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3
+        with:
+          app-id: ${{ env.APP_ID }}
+          private-key: ${{ env.PRIVATE_KEY }}
+
+      
+      - name: Republish Latest Release
+        uses: rancher/ecm-distro-tools/actions/republish-latest@49656efa72e90062a70fac1a85ad121f4873a6a0 # v0.74.4
+        with:
+          owner: ${{ github.repository_owner }}
+          repo: ${{ github.event.repository.name }}
+          commitish: 'main'
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
