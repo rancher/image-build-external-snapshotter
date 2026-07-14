@@ -44,7 +44,7 @@ actions:
         title: 'Bump external-snapshotter version to {{ source "ext-snap" }}'
         kind: github/pullrequest
         spec:
-            automerge: false
+            automerge: true
             labels:
                 - chore
                 - skip-changelog

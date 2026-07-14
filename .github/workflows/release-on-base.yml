@@ -34,13 +34,32 @@ jobs:
 
           dockerfile_diff="$(git diff --unified=0 "$base_sha" "$GITHUB_SHA" -- Dockerfile)"
 
-          old_go_image="$(grep -E '^-ARG GO_IMAGE=rancher/hardened-build-base:v[0-9]+\.[0-9]+\.[0-9]+b[0-9]+$' <<< "$dockerfile_diff" | sed -E 's/^-ARG GO_IMAGE=//' | head -n1)"
-          new_go_image="$(grep -E '^\+ARG GO_IMAGE=rancher/hardened-build-base:v[0-9]+\.[0-9]+\.[0-9]+b[0-9]+$' <<< "$dockerfile_diff" | sed -E 's/^\+ARG GO_IMAGE=//' | head -n1)"
+          changed_lines="$(grep -E '^[+-]' <<< "$dockerfile_diff" | grep -Ev '^(\+\+\+|---)' || true)"
+          changed_count="$(wc -l <<< "$changed_lines" | tr -d ' ')"
 
-          if [[ -z "$old_go_image" || -z "$new_go_image" ]]; then
-            echo "Missing required GO_IMAGE replacement in Dockerfile diff"
+          if [[ "$changed_count" -ne 2 ]]; then
+            echo "Expected only one Dockerfile line replacement (GO_IMAGE), found $changed_count changed lines"
+            echo "$changed_lines"
             exit 1
           fi
+
+          removed_line="$(grep -E '^-' <<< "$changed_lines" | head -n1 || true)"
+          added_line="$(grep -E '^\+' <<< "$changed_lines" | head -n1 || true)"
+
+          if ! [[ "$removed_line" =~ ^-ARG\ GO_IMAGE=rancher/hardened-build-base:v[0-9]+\.[0-9]+\.[0-9]+b[0-9]+$ ]]; then
+            echo "Removed Dockerfile line is not the expected GO_IMAGE format"
+            echo "$removed_line"
+            exit 1
+          fi
+
+          if ! [[ "$added_line" =~ ^\+ARG\ GO_IMAGE=rancher/hardened-build-base:v[0-9]+\.[0-9]+\.[0-9]+b[0-9]+$ ]]; then
+            echo "Added Dockerfile line is not the expected GO_IMAGE format"
+            echo "$added_line"
+            exit 1
+          fi
+
+          old_go_image="${removed_line#-ARG GO_IMAGE=}"
+          new_go_image="${added_line#+ARG GO_IMAGE=}"
 
           if [[ "$old_go_image" == "$new_go_image" ]]; then
             echo "GO_IMAGE line was not actually changed"
