@@ -27,9 +27,9 @@ endif
 
 
 
-.PHONY: build-image-csi
-build-image-csi: IMAGE = $(REPO)/hardened-csi-snapshotter:$(TAG)
-build-image-csi:
+.PHONY: build-image-csi-snapshotter
+build-image-csi-snapshotter: IMAGE = $(REPO)/hardened-csi-snapshotter:$(TAG)
+build-image-csi-snapshotter:
 	docker buildx build \
 		--platform=$(TARGET_PLATFORMS) \
 		--build-arg PKG=$(PKG) \
@@ -52,12 +52,12 @@ build-image-snapshot-controller:
 	.
 
 .PHONY: build-image-all
-build-image-all: build-image-csi build-image-snapshot-controller
+build-image-all: build-image-csi-snapshotter build-image-snapshot-controller
 
 # $(IID_FILE_FLAG) is provided in GHA by ecm-distro-tools/action/publish-image
-.PHONY: push-image-csi
-push-image-csi: IMAGE = $(REPO)/hardened-csi-snapshotter:$(TAG)
-push-image-csi:
+.PHONY: push-image-csi-snapshotter
+push-image-csi-snapshotter: IMAGE = $(REPO)/hardened-csi-snapshotter:$(TAG)
+push-image-csi-snapshotter:
 	docker buildx build \
 		$(IID_FILE_FLAG) \
 		--sbom=true \
