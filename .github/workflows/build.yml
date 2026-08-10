@@ -30,6 +30,8 @@ jobs:
         echo "TAG=${TAG}${BUILD_META}" >> "$GITHUB_ENV"
 
     - name: Build csi-snapshotter image
+      env:
+        TARGET_PLATFORMS: linux/amd64,linux/arm64
       run: make build-image-csi
     
     - name: Run Trivy vulnerability scanner
@@ -62,6 +64,8 @@ jobs:
         echo "TAG=${TAG}${BUILD_META}" >> "$GITHUB_ENV"
 
     - name: Build snapshot-controller image
+      env:
+        TARGET_PLATFORMS: linux/amd64,linux/arm64
       run: make build-image-snapshot-controller
     
     - name: Run Trivy vulnerability scanner
