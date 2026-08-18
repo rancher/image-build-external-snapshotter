@@ -29,7 +29,7 @@ jobs:
       uses: rancher/ecm-distro-tools/actions/publish-image@b558c3371d4a363f131e31a87d5c47dae2bbebe7 # v0.75.1
       with:
         image: hardened-csi-snapshotter
-        make-target: push-image-csi
+        make-target: push-image-csi-snapshotter
         platforms: linux/amd64,linux/arm64
         tag: ${{ github.event.release.tag_name }}
         public-repo: ${{ github.repository_owner }}
