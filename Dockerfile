@@ -13,7 +13,7 @@ RUN set -x && \
 
 # Build the two snapshot binaries
 FROM base-builder AS builder
-ARG PKG
+ARG PKG=github.com/kubernetes-csi/external-snapshotter
 ARG TAG
 RUN git clone --depth=1 https://${PKG}.git $GOPATH/src/${PKG}
 WORKDIR $GOPATH/src/${PKG}

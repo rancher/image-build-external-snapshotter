@@ -12,7 +12,6 @@ ifndef TARGET_PLATFORMS
 endif
 
 REPO ?= rancher
-PKG ?= github.com/kubernetes-csi/external-snapshotter
 BUILD_META=-build$(shell date +%Y%m%d)
 TAG ?= ${GITHUB_ACTION_TAG}
 
@@ -32,7 +31,6 @@ build-image-csi-snapshotter: IMAGE = $(REPO)/hardened-csi-snapshotter:$(TAG)
 build-image-csi-snapshotter:
 	docker buildx build \
 		--platform=$(TARGET_PLATFORMS) \
-		--build-arg PKG=$(PKG) \
 		--build-arg TAG=$(TAG:$(BUILD_META)=) \
 		--target csi-snapshotter \
 		--tag $(IMAGE) \
@@ -44,7 +42,6 @@ build-image-snapshot-controller: IMAGE = $(REPO)/hardened-snapshot-controller:$(
 build-image-snapshot-controller:
 	docker buildx build \
 		--platform=$(TARGET_PLATFORMS) \
-		--build-arg PKG=$(PKG) \
 		--build-arg TAG=$(TAG:$(BUILD_META)=) \
 		--target snapshot-controller \
 		--tag $(IMAGE) \
@@ -63,7 +60,6 @@ push-image-csi-snapshotter:
 		--sbom=true \
 		--attest type=provenance,mode=max \
 		--platform=$(TARGET_PLATFORMS) \
-		--build-arg PKG=$(PKG) \
 		--build-arg TAG=$(TAG:$(BUILD_META)=) \
 		--target csi-snapshotter \
 		--tag $(IMAGE) \
@@ -79,7 +75,6 @@ push-image-snapshot-controller:
 		--sbom=true \
 		--attest type=provenance,mode=max \
 		--platform=$(TARGET_PLATFORMS) \
-		--build-arg PKG=$(PKG) \
 		--build-arg TAG=$(TAG:$(BUILD_META)=) \
 		--target snapshot-controller \
 		--tag $(IMAGE) \
@@ -96,7 +91,6 @@ image-scan:
 log:
 	@echo "TARGET_PLATFORMS=$(TARGET_PLATFORMS)"
 	@echo "REPO=$(REPO)"
-	@echo "PKG=$(PKG)"
 	@echo "TAG=$(TAG:$(BUILD_META)=)"
 	@echo "BUILD_META=$(BUILD_META)"
 	@echo "UNAME_M=$(UNAME_M)"
