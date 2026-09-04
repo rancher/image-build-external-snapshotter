@@ -11,3 +11,7 @@
 # CVE-2026-56855/78662 (ssh channel DoS) — golang.org/x/crypto/ssh.
 # Drop once upstream requires golang.org/x/crypto >= v0.56.0.
 -replace golang.org/x/crypto=golang.org/x/crypto@v0.56.0
+
+# golang.org/x/text: CVE-2026-56852 (HIGH, DoS via invalid UTF-8 input).
+# Drop once upstream requires golang.org/x/text >= v0.39.0.
+-replace golang.org/x/text=golang.org/x/text@v0.39.0
