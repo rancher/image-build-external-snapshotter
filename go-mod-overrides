@@ -2,6 +2,21 @@
 # Drop once upstream requires golang.org/x/net >= v0.56.0.
 -replace golang.org/x/net=golang.org/x/net@v0.56.0
 
-# google.golang.org/grpc: GHSA-hrxh-6v49-42gf (xDS RBAC auth bypass, HTTP/2 Rapid Reset DoS).
-# Drop once upstream requires google.golang.org/grpc >= v1.82.1.
--replace google.golang.org/grpc=google.golang.org/grpc@v1.82.1
+# google.golang.org/grpc: GHSA-hrxh-6v49-42gf (xDS RBAC auth bypass, HTTP/2 Rapid Reset DoS),
+# CVE-2026-84304 (HIGH); bump to v1.83.1.
+# Drop once upstream requires google.golang.org/grpc >= v1.83.1.
+-replace google.golang.org/grpc=google.golang.org/grpc@v1.83.1
+
+# golang.org/x/crypto: CVE-2026-56854 (CRITICAL, ssh source-address auth bypass),
+# CVE-2026-56855/78662 (ssh channel DoS) — golang.org/x/crypto/ssh.
+# Drop once upstream requires golang.org/x/crypto >= v0.56.0.
+-replace golang.org/x/crypto=golang.org/x/crypto@v0.56.0
+
+# golang.org/x/text: CVE-2026-56852 (HIGH, DoS via invalid UTF-8 input).
+# Drop once upstream requires golang.org/x/text >= v0.39.0.
+-replace golang.org/x/text=golang.org/x/text@v0.39.0
+
+# github.com/google/cel-go: GHSA-gcjh-h69q-9w9g (MEDIUM) — JSON private fields exposed via
+# NativeTypes and ParseStructTag.
+# Drop once upstream requires github.com/google/cel-go >= v0.29.0.
+-replace github.com/google/cel-go=github.com/google/cel-go@v0.29.0
